@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geospatial Token Recognition</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 90%;
+            padding: 40px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        textarea {
+            width: 98%;
+            height: 200px;
+            resize: none;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        li:last-child {
+            margin-bottom: 0;
+        }
+
+        .result {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .token {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+            margin-left: 0px;
+        }
+
+        .info {
+            display:flex;
+            flex-direction: column;
+            color: #666;
+        }
+
+        .info > div{
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Geospatial Token Recognition</h1>
+        <textarea rows=20 id="inputText" placeholder="Enter your text here..."></textarea>
+        <button onclick="processText()" >Process</button>
+        <ul id="results"></ul>
+    </div>
+
+    <script>
+        function processText() {
+            alert("Fetching data...");
+
+            var fetchingMessage = document.createElement('div');
+            fetchingMessage.textContent = "Fetching data...";
+            document.getElementById('results').appendChild(fetchingMessage);
+        
+            var inputText = document.getElementById('inputText').value;
+            fetch('/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'inputText=' + encodeURIComponent(inputText)
+            })
+            .then(response => response.json())
+            .then(data => {
+                var resultsList = document.getElementById('results');
+
+                resultsList.removeChild(fetchingMessage);
+                
+                //resultsList.innerHTML = '';
+                data.forEach(item => {
+                    var listItem = document.createElement('li');
+                    listItem.classList.add('result');
+                    listItem.innerHTML = `
+                    <div class="result">
+                        <div class="token">Token Identified: ${item.token}</div>
+                        <div class="info">
+                            <div>Canonical Name: ${item.canonical_name}</div>
+                            <div>Table Name: ${item.table_name}</div>
+                        </div>
+                    </div>
+                `;
+
+                    resultsList.appendChild(listItem);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
